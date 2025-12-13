@@ -53,9 +53,86 @@
     games::<br> 
     <a href="https://tgnoil.github.io/enochian-chess/">Enochian Chess</a>
     // <a href="https://github.com/tgnoil/hexadeck">hexadeck</a> //
+
+    <br><br>
+
+    <div id="blog-viewer">
+  <div id="blog-box" style="border:1px solid #ccc; padding:10px; width:100%; max-width:600px; height:300px; overflow:auto; white-space:pre-wrap; font-family:monospace;"></div>
+  <div style="margin-top:10px; display:flex; gap:10px;">
+    <button id="prev-btn">&lt; previous</button>
+    <button id="next-btn">next &gt;</button>
   </div>
+</div>
+    
+  </div>
+
+
+<script>
+let files = [];
+let currentIndex = 0;
+
+const box = document.getElementById("blog-box");
+const prevBtn = document.getElementById("prev-btn");
+const nextBtn = document.getElementById("next-btn");
+
+async function loadFile(index) {
+  if (index < 0 || index >= files.length) return;
+  currentIndex = index;
+
+  prevBtn.disabled = (currentIndex === 0);
+  nextBtn.disabled = (currentIndex === files.length - 1);
+
+  try {
+    const response = await fetch(files[currentIndex]);
+    if (!response.ok) {
+      box.textContent = "Error loading file: " + files[currentIndex];
+      return;
+    }
+    const text = await response.text();
+    box.textContent = text;
+    box.scrollTop = 0;
+  } catch (e) {
+    box.textContent = "Error: " + e.message;
+  }
+}
+
+async function initBlogViewer() {
+  try {
+    const response = await fetch("blog_files.json");
+    if (!response.ok) {
+      box.textContent = "Could not load blog_files.json";
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
+    files = await response.json();
+
+    if (!Array.isArray(files) || files.length === 0) {
+      box.textContent = "No blog entries found.";
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
+
+    await loadFile(0);
+  } catch (e) {
+    box.textContent = "Error: " + e.message;
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+  }
+}
+
+prevBtn.addEventListener("click", () => loadFile(currentIndex - 1));
+nextBtn.addEventListener("click", () => loadFile(currentIndex + 1));
+
+// Start on page load
+initBlogViewer();
+</script>
+
+  
 </body>
 </html>
+
 
 
 
