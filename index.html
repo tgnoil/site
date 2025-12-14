@@ -60,6 +60,7 @@
   <div id="blog-box" style="border:2px solid #ccc; padding:10px; width:100%; max-width:600px; height:100px; overflow:auto; white-space:pre-wrap; font-family:monospace; text-align: left;"></div>
   <div style="margin-top:10px; display:flex; gap:10px; justify-content: center;">
     <button id="prev-btn">&lt;</button>
+    <button id="random-btn">random</button> 
     <button id="next-btn">&gt;</button>
   </div>
 </div>
@@ -74,6 +75,7 @@ let currentIndex = 0;
 const box = document.getElementById("blog-box");
 const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
+const randomBtn = document.getElementById("random-btn");  // ← ADD THIS
 
 async function loadFile(index) {
   if (index < 0 || index >= files.length) return;
@@ -81,6 +83,7 @@ async function loadFile(index) {
 
   prevBtn.disabled = (currentIndex === 0);
   nextBtn.disabled = (currentIndex === files.length - 1);
+  randomBtn.disabled = (files.length === 0);  // ← ADD THIS
 
   try {
     const response = await fetch(files[currentIndex]);
@@ -103,6 +106,7 @@ async function initBlogViewer() {
       box.textContent = "Could not load blog_files.json";
       prevBtn.disabled = true;
       nextBtn.disabled = true;
+      randomBtn.disabled = true;  // ← ADD THIS
       return;
     }
     files = await response.json();
@@ -111,6 +115,7 @@ async function initBlogViewer() {
       box.textContent = "No blog entries found.";
       prevBtn.disabled = true;
       nextBtn.disabled = true;
+      randomBtn.disabled = true;  // ← ADD THIS
       return;
     }
 
@@ -119,19 +124,28 @@ async function initBlogViewer() {
     box.textContent = "Error: " + e.message;
     prevBtn.disabled = true;
     nextBtn.disabled = true;
+    randomBtn.disabled = true;  // ← ADD THIS
   }
 }
 
 prevBtn.addEventListener("click", () => loadFile(currentIndex - 1));
 nextBtn.addEventListener("click", () => loadFile(currentIndex + 1));
+randomBtn.addEventListener("click", () => {  // ← ADD THIS
+  if (files.length > 0) {
+    const randomIndex = Math.floor(Math.random() * files.length);
+    loadFile(randomIndex);
+  }
+});
 
 // Start on page load
 initBlogViewer();
 </script>
 
+
   
 </body>
 </html>
+
 
 
 
