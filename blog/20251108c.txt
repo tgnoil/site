@@ -1,0 +1,3 @@
+20251108
+"care" can be neither created nor destroyed.
+if you wish to stop caring about one thing, you must redirect that care _to_ another. if you wish to begin caring about one thing, you might redirect that care _from_ another.
